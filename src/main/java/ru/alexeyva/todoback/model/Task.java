@@ -32,9 +32,11 @@ public class Task {
 
     String title;
     Boolean completed;
+
     @JsonSerialize(using = InstantSerializer.class)
     @JsonDeserialize(using = InstantDeserializer.class)
     Instant startDate;
+
     @JsonSerialize(using = InstantSerializer.class)
     @JsonDeserialize(using = InstantDeserializer.class)
     Instant endDate;

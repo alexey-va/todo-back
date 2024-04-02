@@ -213,22 +213,21 @@ public class Controller {
     }
 
     @DeleteMapping("user/tasks")
-    public ResponseEntity<Object> deleteTask(Principal principal, @RequestParam("task_list") int taskListId, @RequestParam("local_id") int localId) {
+    public ResponseEntity<Object> deleteTask(Principal principal, @RequestBody Task task) {
         String username = principal.getName();
         var user = todoUserRepo.fetchTodoUserEagerlyAll(username);
         if (user == null) throw new UserNotFoundException("No user with name " + username);
 
-        TaskList taskList = user.taskList(taskListId);
-        if (taskList == null) return ResponseEntity.status(404)
-                .body(Map.of("status", "error", "message", "Task list with id " + taskListId + " not found"));
-
-        Task task = user.task(localId);
         if (task == null) return ResponseEntity.status(404)
-                .body(Map.of("status", "error", "message", "Task with id " + localId + " not found"));
+                .body(Map.of("status", "error", "message", "Task not found"));
 
-        user.getTasks().remove(task);
+        boolean deleted = user.getTasks().removeIf(t -> Objects.equals(t.getLocalId(), task.getLocalId()));
+        if(!deleted){
+            return ResponseEntity.status(404)
+                    .body(Map.of("status", "error", "message", "Task with id " + task.getLocalId() + " not found"));
+        }
         todoUserRepo.save(user);
-        return ResponseEntity.ok(Map.of("status", "success", "taskList", taskList));
+        return ResponseEntity.ok(Map.of("status", "success", "tasks", user.getTasks()));
     }
 
     @GetMapping("user/tags")
