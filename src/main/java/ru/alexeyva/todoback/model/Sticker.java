@@ -29,6 +29,8 @@ public class Sticker {
     String color;
     @ManyToMany
     @Fetch(FetchMode.JOIN)
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
     Set<Tag> tags;
 
     @ManyToOne
