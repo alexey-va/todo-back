@@ -28,7 +28,6 @@ public class Sticker {
     String text;
     String color;
     @ManyToMany
-    @JsonIgnore
     @Fetch(FetchMode.JOIN)
     Set<Tag> tags;
 
