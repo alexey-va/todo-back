@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -114,15 +116,15 @@ public class TodoUser {
         }
         if (taskLists == null || taskLists.isEmpty()) {
             Task task1 = Task.builder().title("Task 1").user(this)
-                    .startDate(OffsetDateTime.now()).endDate(OffsetDateTime.now().plusHours(5))
+                    .startDate(Instant.now()).endDate(Instant.now().plus(5, ChronoUnit.HOURS))
                     .completed(false).localId(0).build();
 
             Task task2 = Task.builder().title("Task 2").user(this)
-                    .startDate(OffsetDateTime.now()).endDate(OffsetDateTime.now().plusHours(3))
+                    .startDate(Instant.now()).endDate(Instant.now().plus(3, ChronoUnit.HOURS))
                     .completed(false).localId(1).build();
 
             Task task3 = Task.builder().title("Task 3").user(this)
-                    .startDate(OffsetDateTime.now()).endDate(OffsetDateTime.now().plusHours(7))
+                    .startDate(Instant.now()).endDate(Instant.now().plus(7, ChronoUnit.HOURS))
                     .completed(false).localId(2).build();
 
             TaskList taskList1 = TaskList.builder().user(this).title("Inbox").color("#C1FFC1").localId(0).build();

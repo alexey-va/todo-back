@@ -1,9 +1,17 @@
 package ru.alexeyva.todoback.model;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.IOException;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -24,10 +32,12 @@ public class Task {
 
     String title;
     Boolean completed;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
-    OffsetDateTime startDate;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
-    OffsetDateTime endDate;
+    @JsonSerialize(using = InstantSerializer.class)
+    @JsonDeserialize(using = InstantDeserializer.class)
+    Instant startDate;
+    @JsonSerialize(using = InstantSerializer.class)
+    @JsonDeserialize(using = InstantDeserializer.class)
+    Instant endDate;
 
 
     @JsonProperty("list")
@@ -44,4 +54,18 @@ public class Task {
     @JsonAlias({"localId"})
     Integer localId;
 
+}
+
+class InstantSerializer extends JsonSerializer<Instant> {
+    @Override
+    public void serialize(Instant value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        gen.writeNumber(value.getEpochSecond());
+    }
+}
+
+class InstantDeserializer extends JsonDeserializer<Instant> {
+    @Override
+    public Instant deserialize(com.fasterxml.jackson.core.JsonParser p, com.fasterxml.jackson.databind.DeserializationContext ctxt) throws IOException, com.fasterxml.jackson.core.JsonProcessingException {
+        return Instant.ofEpochSecond(p.getLongValue());
+    }
 }
