@@ -5,8 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.alexeyva.todoback.model.Sticker;
+import ru.alexeyva.todoback.model.Task;
 import ru.alexeyva.todoback.model.TodoUser;
 import ru.alexeyva.todoback.repos.StickerRepo;
+import ru.alexeyva.todoback.repos.TaskRepo;
 import ru.alexeyva.todoback.repos.TodoUserRepo;
 import ru.alexeyva.todoback.utils.Utils;
 
@@ -18,6 +20,7 @@ public class TodoUserService {
 
     final TodoUserRepo todoUserRepo;
     final StickerRepo stickerRepo;
+    final TaskRepo taskRepo;
 
     public boolean existsByUsername(String username){
         return todoUserRepo.existsByUsername(username);
@@ -57,6 +60,17 @@ public class TodoUserService {
         stickerRepo.delete(sticker);
         todoUserRepo.save(todoUser);
         return todoUser.getStickers();
+    }
+
+    @Transactional
+    public boolean deleteTask(TodoUser user, Task task){
+        Task toDelete = user.getTasks().stream()
+                .filter(t -> Objects.equals(t.getLocalId(), task.getLocalId())).findFirst().orElse(null);
+        if(toDelete == null)return false;
+        taskRepo.delete(toDelete);
+        user.getTasks().remove(toDelete);
+        todoUserRepo.save(user);
+        return true;
     }
 
 

@@ -1,5 +1,6 @@
 package ru.alexeyva.todoback.controllers;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -8,10 +9,7 @@ import ru.alexeyva.todoback.exception.NameAlreadyTakenException;
 import ru.alexeyva.todoback.exception.UserAlreadyExistsException;
 import ru.alexeyva.todoback.exception.UserNotFoundException;
 import ru.alexeyva.todoback.model.*;
-import ru.alexeyva.todoback.repos.RoleRepo;
-import ru.alexeyva.todoback.repos.StickerRepo;
-import ru.alexeyva.todoback.repos.TaskListRepo;
-import ru.alexeyva.todoback.repos.TodoUserRepo;
+import ru.alexeyva.todoback.repos.*;
 import ru.alexeyva.todoback.services.TodoUserService;
 
 import java.security.Principal;
@@ -28,6 +26,7 @@ public class Controller {
     final StickerRepo stickerRepo;
     final TaskListRepo taskListRepo;
     final TodoUserRepo todoUserRepo;
+    final TaskRepo taskRepo;
     final TodoUserService todoUserService;
     final RoleRepo roleRepo;
     final PasswordEncoder passwordEncoder;
@@ -218,15 +217,9 @@ public class Controller {
         var user = todoUserRepo.fetchTodoUserEagerlyAll(username);
         if (user == null) throw new UserNotFoundException("No user with name " + username);
 
-        if (task == null) return ResponseEntity.status(404)
-                .body(Map.of("status", "error", "message", "Task not found"));
-
-        boolean deleted = user.getTasks().removeIf(t -> Objects.equals(t.getLocalId(), task.getLocalId()));
-        if(!deleted){
-            return ResponseEntity.status(404)
-                    .body(Map.of("status", "error", "message", "Task with id " + task.getLocalId() + " not found"));
-        }
-        todoUserRepo.save(user);
+        boolean result = todoUserService.deleteTask(user, task);
+        if (!result) return ResponseEntity.status(404)
+                .body(Map.of("status", "error", "message", "Task with id " + task.getLocalId() + " not found"));
         return ResponseEntity.ok(Map.of("status", "success", "tasks", user.getTasks()));
     }
 

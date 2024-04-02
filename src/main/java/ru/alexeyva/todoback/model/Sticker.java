@@ -37,6 +37,7 @@ public class Sticker {
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @JoinColumn(name = "user_id")
+    @ToString.Exclude
     TodoUser user;
 
     @JsonProperty("id")
