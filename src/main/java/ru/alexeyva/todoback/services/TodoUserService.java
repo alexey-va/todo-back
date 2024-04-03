@@ -6,8 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.alexeyva.todoback.model.Sticker;
 import ru.alexeyva.todoback.model.Task;
+import ru.alexeyva.todoback.model.TaskList;
 import ru.alexeyva.todoback.model.TodoUser;
 import ru.alexeyva.todoback.repos.StickerRepo;
+import ru.alexeyva.todoback.repos.TaskListRepo;
 import ru.alexeyva.todoback.repos.TaskRepo;
 import ru.alexeyva.todoback.repos.TodoUserRepo;
 import ru.alexeyva.todoback.utils.Utils;
@@ -21,6 +23,7 @@ public class TodoUserService {
     final TodoUserRepo todoUserRepo;
     final StickerRepo stickerRepo;
     final TaskRepo taskRepo;
+    final TaskListRepo taskListRepo;
 
     public boolean existsByUsername(String username){
         return todoUserRepo.existsByUsername(username);
@@ -69,6 +72,17 @@ public class TodoUserService {
         if(toDelete == null)return false;
         taskRepo.delete(toDelete);
         user.getTasks().remove(toDelete);
+        todoUserRepo.save(user);
+        return true;
+    }
+
+    @Transactional
+    public boolean deleteTaskList(TodoUser user, TaskList taskList){
+        TaskList toDelete = user.getTaskLists().stream()
+                .filter(t -> Objects.equals(t.getLocalId(), taskList.getLocalId())).findFirst().orElse(null);
+        if(toDelete == null)return false;
+        user.getTaskLists().remove(toDelete);
+        taskListRepo.delete(toDelete);
         todoUserRepo.save(user);
         return true;
     }

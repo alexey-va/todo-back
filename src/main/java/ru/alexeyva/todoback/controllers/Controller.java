@@ -157,12 +157,10 @@ public class Controller {
         var user = todoUserRepo.fetchTodoUserEagerlyAll(username);
         if (user == null) throw new UserNotFoundException("No user with name " + username);
 
-        TaskList taskList = user.taskList(localId);
-        if (taskList == null) return ResponseEntity.status(404)
-                .body(Map.of("status", "error", "message", "Task list with id " + localId + " not found"));
+        TaskList taskListDto = new TaskList();
+        taskListDto.setLocalId(localId);
 
-        user.getTaskLists().remove(taskList);
-        todoUserRepo.save(user);
+        todoUserService.deleteTaskList(user, taskListDto);
         return ResponseEntity.ok(Map.of("status", "success", "taskLists", user.getTaskLists()));
     }
 
