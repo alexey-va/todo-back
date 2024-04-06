@@ -14,7 +14,7 @@ public class KafkaService {
 
     private final List<LogMessage> logs = new ArrayList<>();
 
-    @KafkaListener(topics = "todo_logs", groupId = "group_id")
+    @KafkaListener(topics = "todo_logs", groupId = "${spring.kafka.consumer.group-id}")
     public void consume(String message) {
         LogMessage logMessage = new LogMessage();
         logMessage.setMessage(message);
