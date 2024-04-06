@@ -1,6 +1,7 @@
 package ru.alexeyva.todoback.controllers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import java.util.Objects;
 @RequestMapping("/api/v1/")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
+@Slf4j
 public class Controller {
 
     final StickerRepo stickerRepo;
@@ -33,12 +35,14 @@ public class Controller {
 
     @PostMapping("login")
     public ResponseEntity<Object> login(Principal principal) {
+        log.info("User logged in: {}", principal.getName());
         return ResponseEntity.ok(Map.of("status", "success", "username", principal.getName()));
     }
 
     @PostMapping("register")
     public ResponseEntity<TodoResponse> register(@RequestBody TodoUser todoUser) {
         var user = todoUserService.createUser(todoUser);
+        log.info("User registered: {}", user.getUsername());
         return TodoResponse.builder()
                 .status("success")
                 .field("user", user)
@@ -61,6 +65,7 @@ public class Controller {
     @GetMapping("user")
     public ResponseEntity<TodoUser> getAllDataOfUser(Principal principal) {
         String username = principal.getName();
+        log.info("User requested all data: {}", username);
         var user = todoUserRepo.fetchTodoUserEagerlyAll(username);
         if (user == null) throw new UserNotFoundException(username);
         return ResponseEntity.ok(user);
