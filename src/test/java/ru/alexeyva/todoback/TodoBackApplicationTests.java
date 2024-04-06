@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockEnvironment;
+import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.springframework.test.context.TestPropertySources;
@@ -23,6 +24,7 @@ import java.util.List;
 @SpringBootTest
 @Testcontainers
 @Import(TestConfig.class)
+@ActiveProfiles("test")
 class TodoBackApplicationTests {
 
     @Test
