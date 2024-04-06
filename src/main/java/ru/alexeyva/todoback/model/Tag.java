@@ -29,7 +29,7 @@ public class Tag {
     @JoinColumn(name = "user_id")
 
     @ManyToOne
-            @ToString.Exclude
+    @ToString.Exclude
     TodoUser user;
 
     @JsonProperty("id")

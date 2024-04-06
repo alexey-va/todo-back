@@ -18,15 +18,19 @@ public interface TodoUserRepo extends JpaRepository<TodoUser, Long> {
 
     boolean existsByUsername(String username);
 
-    @Query("SELECT u FROM TodoUser u WHERE u.username = :username")
+    @Query("SELECT u FROM TodoUser u JOIN FETCH u.stickers sticker JOIN FETCH sticker.tags  WHERE u.username = :username")
     @EntityGraph(attributePaths = {"stickers"})
     TodoUser fetchTodoUserEagerlyWithStickers(String username);
 
-    @Query("SELECT u FROM TodoUser u WHERE u.username = :username")
+    @Query("SELECT u FROM TodoUser u JOIN FETCH u.tasks WHERE u.username = :username")
     @EntityGraph(attributePaths = {"tasks"})
     TodoUser fetchTodoUserEagerlyWithTasks(String username);
 
-    @Query("SELECT u FROM TodoUser u WHERE u.username = :username")
+    @Query("SELECT u FROM TodoUser u JOIN FETCH u.tags WHERE u.username = :username")
+    @EntityGraph(attributePaths = {"tags"})
+    TodoUser fetchTodoUserEagerlyWithTags(String username);
+
+    @Query("SELECT u FROM TodoUser u JOIN FETCH u.taskLists WHERE u.username = :username")
     @EntityGraph(attributePaths = {"taskLists"})
     TodoUser fetchTodoUserEagerlyWithTaskLists(String username);
 
@@ -34,7 +38,4 @@ public interface TodoUserRepo extends JpaRepository<TodoUser, Long> {
     @EntityGraph("TodoUser.all")
     List<TodoUser> fetchAll();
 
-/*    @Query("SELECT u FROM TodoUser u LEFT JOIN FETCH u.taskLists LEFT JOIN FETCH u.stickers " +
-            "LEFT JOIN FETCH u.tags WHERE u.username = :username")
-    TodoUser findTodoUserByUsername(@Param("username") String username);*/
 }

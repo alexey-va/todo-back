@@ -2,12 +2,10 @@ package ru.alexeyva.todoback.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +15,10 @@ import java.util.Set;
 @Data
 @Table(name = "todo_users",
         indexes = {@Index(name = "username_index", columnList = "username", unique = true)},
-        uniqueConstraints = {@UniqueConstraint(columnNames = "username")})
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "username")
+        })
+
 @NamedEntityGraph(name = "TodoUser.all",
         attributeNodes = {
                 @NamedAttributeNode("taskLists"),
@@ -48,14 +49,50 @@ public class TodoUser {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     Set<Task> tasks;
 
+    @JsonIgnore
+    int maxLocalTaskId = 0;
+    @JsonIgnore
+    int maxLocalTaskListId = 0;
+    @JsonIgnore
+    int maxLocalTagId = 0;
+    @JsonIgnore
+    int maxLocalStickerId = 0;
+
     @ManyToOne
     @JsonIgnore
     Role role;
 
-    @JsonIgnore
-    public int getMaxLocalTaskId() {
-        if (tasks == null || tasks.isEmpty()) return 0;
-        return tasks.stream().mapToInt(Task::getLocalId).max().orElse(0);
+
+    public Task createTask(Task task) {
+        if (tasks == null) tasks = new HashSet<>();
+        task.setLocalId(++maxLocalTaskId);
+        task.setUser(this);
+        tasks.add(task);
+        return task;
+    }
+
+    public TaskList createTaskList(TaskList taskList) {
+        if (taskLists == null) taskLists = new HashSet<>();
+        taskList.setLocalId(++maxLocalTaskListId);
+        taskList.setUser(this);
+        taskLists.add(taskList);
+        return taskList;
+    }
+
+    public Tag createTag(Tag tag) {
+        if (tags == null) tags = new HashSet<>();
+        tag.setLocalId(++maxLocalTagId);
+        tag.setUser(this);
+        tags.add(tag);
+        return tag;
+    }
+
+    public Sticker createSticker(Sticker sticker) {
+        if (stickers == null) stickers = new HashSet<>();
+        sticker.setLocalId(++maxLocalStickerId);
+        sticker.setUser(this);
+        stickers.add(sticker);
+        return sticker;
     }
 
     @JsonIgnore
@@ -106,51 +143,7 @@ public class TodoUser {
         return stickers.stream().filter(sticker -> sticker.localId == localId).findAny().orElse(null);
     }
 
-    @JsonIgnore
-    public void createDefaults() {
-        Tag t1 = Tag.builder().user(this).title("Important").color("#FFC1C1").localId(0).build();
-        Tag t2 = Tag.builder().user(this).title("Casual").color("#C1D1FF").localId(1).build();
-        Tag t3 = Tag.builder().user(this).title("Home").color("#C1FFC1").localId(2).build();
-        if (tags == null || tags.isEmpty()) {
-            tags = new HashSet<>(Set.of(t1, t2, t3));
-        }
-        if (taskLists == null || taskLists.isEmpty()) {
-            Task task1 = Task.builder().title("Task 1").user(this)
-                    .startDate(Instant.now()).endDate(Instant.now().plus(5, ChronoUnit.HOURS))
-                    .completed(false).localId(0).build();
 
-            Task task2 = Task.builder().title("Task 2").user(this)
-                    .startDate(Instant.now()).endDate(Instant.now().plus(3, ChronoUnit.HOURS))
-                    .completed(false).localId(1).build();
-
-            Task task3 = Task.builder().title("Task 3").user(this)
-                    .startDate(Instant.now()).endDate(Instant.now().plus(7, ChronoUnit.HOURS))
-                    .completed(false).localId(2).build();
-
-            TaskList taskList1 = TaskList.builder().user(this).title("Inbox").color("#C1FFC1").localId(0).build();
-            TaskList taskList2 = TaskList.builder().user(this).title("Work").color("#C1D1FF").localId(1).build();
-            TaskList taskList3 = TaskList.builder().user(this).title("Projects").color("#FFC1C1").localId(2).build();
-
-            task1.setTaskListId(taskList1.localId);
-            task2.setTaskListId(taskList2.localId);
-            task3.setTaskListId(taskList3.localId);
-
-            taskLists = new HashSet<>(Set.of(taskList1, taskList2, taskList3));
-            tasks = new HashSet<>(Set.of(task1, task2, task3));
-        }
-        if (stickers == null || stickers.isEmpty()) {
-            stickers = new HashSet<>(Set.of(
-                    Sticker.builder().user(this).title("Sticker 1").text("Sticker 1 text").color("#FFC1C1")
-                            .tags(new HashSet<>(List.of(t1))).localId(0).build(),
-                    Sticker.builder().user(this).title("Sticker 2").text("Sticker 2 text").color("#C1D1FF")
-                            .tags(new HashSet<>(List.of(t2))).localId(1).build(),
-                    Sticker.builder().user(this).title("Sticker 3").text("Sticker 3 text").color("#C1FFC1")
-                            .tags(new HashSet<>(List.of(t3))).localId(2).build()
-            ));
-        }
-
-
-    }
 
     public Iterable<? extends Task> tasksOfList(TaskList taskList) {
         return tasks.stream().filter(task -> task.taskListId.longValue() == taskList.id)::iterator;

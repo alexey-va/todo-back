@@ -1,12 +1,14 @@
 package ru.alexeyva.todoback.exception;
 
+import lombok.Getter;
+
+@Getter
 public class NameAlreadyTakenException extends RuntimeException{
 
-    public NameAlreadyTakenException(String message) {
+    String name;
+    public NameAlreadyTakenException(String message, String name) {
         super(message);
+        this.name = name;
     }
 
-    public NameAlreadyTakenException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }
