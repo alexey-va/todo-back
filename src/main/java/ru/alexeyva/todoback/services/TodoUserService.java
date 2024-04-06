@@ -119,6 +119,11 @@ public class TodoUserService {
         Sticker s2 = Sticker.builder().title("Sticker 2").text("Sticker 2 text").color("#C1D1FF").build();
         Sticker s3 = Sticker.builder().title("Sticker 3").text("Sticker 3 text").color("#C1FFC1").build();
 
+        s1.setTags(new HashSet<>(List.of(t2, t3)));
+        s2.setTags(new HashSet<>(List.of(t1, t3)));
+        s3.setTags(new HashSet<>(List.of(t1, t2)));
+
+
         todoUser.createSticker(s1);
         todoUser.createSticker(s2);
         todoUser.createSticker(s3);
