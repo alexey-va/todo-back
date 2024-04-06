@@ -20,6 +20,7 @@ public class Config {
         hikariDataSource.setJdbcUrl(dbUrl);
         hikariDataSource.setUsername(environment.getProperty("DB_USER"));
         hikariDataSource.setPassword(environment.getProperty("DB_PASS"));
+        System.out.println("Data Source: "+hikariDataSource);
         return hikariDataSource;
     }
 
