@@ -17,7 +17,7 @@ public class Config {
         hikariDataSource.setDriverClassName("org.postgresql.Driver");
         String dbUrl = environment.getProperty("DATABASE_URL");
         if(dbUrl == null) dbUrl = "jdbc:postgresql://localhost:5432/todo";
-        hikariDataSource.setJdbcUrl(environment.getProperty("DB_URL"));
+        hikariDataSource.setJdbcUrl(dbUrl);
         hikariDataSource.setUsername(environment.getProperty("DB_USER"));
         hikariDataSource.setPassword(environment.getProperty("DB_PASS"));
         return hikariDataSource;
