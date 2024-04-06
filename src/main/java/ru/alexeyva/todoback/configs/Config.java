@@ -15,12 +15,13 @@ public class Config {
     DataSource dataSource(Environment environment) {
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDriverClassName("org.postgresql.Driver");
-        String dbUrl = environment.getProperty("DATABASE_URL");
+
+        String dbUrl = environment.getProperty("DB_URL");
         if(dbUrl == null) dbUrl = "jdbc:postgresql://localhost:5432/todo";
         hikariDataSource.setJdbcUrl(dbUrl);
         hikariDataSource.setUsername(environment.getProperty("DB_USER"));
         hikariDataSource.setPassword(environment.getProperty("DB_PASS"));
-        System.out.println("Data Source: "+hikariDataSource);
+
         return hikariDataSource;
     }
 
