@@ -35,6 +35,7 @@ public class KafkaConfig {
     @Bean
     public ProducerFactory<String, String> produceFactory(Environment env){
         Map<String, Object> configs = new HashMap<>();
+        System.out.println(env.getProperty("KAFKA_BOOTSTRAP"));
         configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("KAFKA_BOOTSTRAP"));
         configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
