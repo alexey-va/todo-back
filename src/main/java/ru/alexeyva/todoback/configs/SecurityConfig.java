@@ -1,4 +1,4 @@
-package ru.alexeyva.todoback.security;
+package ru.alexeyva.todoback.configs;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
