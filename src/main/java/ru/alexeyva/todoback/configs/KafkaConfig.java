@@ -23,7 +23,7 @@ public class KafkaConfig {
     @Bean
     public KafkaAdmin kafkaAdmin(Environment env){
         Map<String, Object> configs = new HashMap<>();
-        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "rus-crafting.ru:9092");
+        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("KAFKA_BOOTSTRAP"));
         return new KafkaAdmin(configs);
     }
 
@@ -35,8 +35,7 @@ public class KafkaConfig {
     @Bean
     public ProducerFactory<String, String> produceFactory(Environment env){
         Map<String, Object> configs = new HashMap<>();
-        System.out.println(env.getProperty("KAFKA_BOOTSTRAP"));
-        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "rus-crafting.ru:9092");
+        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("KAFKA_BOOTSTRAP"));
         configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         return new DefaultKafkaProducerFactory<>(configs);
