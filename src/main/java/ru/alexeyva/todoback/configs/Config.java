@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -37,7 +39,9 @@ public class Config {
         return new RestTemplate();
     }
 
+
     @Bean
+    @Profile("redis")
     public RedisTemplate<String, String> redisTemplate(Environment environment){
         try {
             String redisHost = environment.getProperty("REDIS_HOST");
