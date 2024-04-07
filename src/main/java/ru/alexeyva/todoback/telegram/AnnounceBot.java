@@ -15,13 +15,13 @@ import static org.telegram.abilitybots.api.objects.Locality.USER;
 import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 @Component
-@Profile("telegram")
+@Profile({"telegram", "redis"})
 public class AnnounceBot extends AbilityBot {
 
     final MessageHandler messageHandler;
     final RedisTemplate<String, String> redisTemplate;
 
-    protected AnnounceBot(Environment env, @Autowired(required = false) RedisTemplate<String, String> redisTemplate) {
+    protected AnnounceBot(Environment env, RedisTemplate<String, String> redisTemplate) {
         super(env.getProperty("TELEGRAM_BOT_TOKEN"), "todo-announce-bot");
         this.redisTemplate = redisTemplate;
         this.messageHandler = new MessageHandler(this.silent, this.db(), this.redisTemplate);
