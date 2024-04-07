@@ -116,9 +116,9 @@ public class TodoUserService {
         todoUser.createTask(task3);
 
 
-        String text1 = LoremIpsum.getInstance().getParagraphs(1,3);
-        String text2 = LoremIpsum.getInstance().getParagraphs(2,3);
-        String text3 = LoremIpsum.getInstance().getParagraphs(1,3);
+        String text1 = LoremIpsum.getInstance().getParagraphs(1,1);
+        String text2 = LoremIpsum.getInstance().getParagraphs(1,1);
+        String text3 = LoremIpsum.getInstance().getParagraphs(1,1);
 
         Sticker s1 = Sticker.builder().title(LoremIpsum.getInstance().getTitle(1,3)).text(text1).color("#FFC1C1").build();
         Sticker s2 = Sticker.builder().title(LoremIpsum.getInstance().getTitle(1,3)).text(text2).color("#C1D1FF").build();
