@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class GeoIPService {
     private final RestTemplate restTemplate;
     private final Environment env;
 
+    @Cacheable("geoip")
     public GeoLocation getLocation(String ip){
         String key = env.getProperty("GEOIP_KEY");
         if (key == null) return null;
