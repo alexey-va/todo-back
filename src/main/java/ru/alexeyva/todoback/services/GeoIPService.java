@@ -22,13 +22,13 @@ public class GeoIPService {
         String key = env.getProperty("GEOIP_KEY");
         if (key == null) return null;
 
-        String url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/iplocate/address?ip={ip}";
+        String url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/iplocate/address?ip="+ip;
 
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         headers.set("Authorization", "Token "+key);
-        ResponseEntity<GeoLocation> response = restTemplate.exchange(url, HttpMethod.GET, entity, GeoLocation.class, ip);
+        ResponseEntity<GeoLocation> response = restTemplate.exchange(url, HttpMethod.GET, entity, GeoLocation.class);
         if(response.getStatusCode() != HttpStatus.OK) return null;
         return response.getBody();
     }
