@@ -35,13 +35,6 @@ public class Config {
     }
 
     @Bean
-    public RestTemplate restTemplate(){
-        return new RestTemplate();
-    }
-
-
-    @Bean
-    @Profile("redis")
     public RedisTemplate<String, String> redisTemplate(Environment environment){
         try {
             String redisHost = environment.getProperty("REDIS_HOST");
