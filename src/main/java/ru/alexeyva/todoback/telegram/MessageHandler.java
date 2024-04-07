@@ -1,20 +1,30 @@
 package ru.alexeyva.todoback.telegram;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.sender.SilentSender;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MessageHandler {
 
     private final SilentSender silentSender;
     private final Set<Long> adminChats;
+    private final RedisTemplate<String, String> redisTemplate;
 
 
-    public MessageHandler(SilentSender silentSender, DBContext db) {
+    public MessageHandler(SilentSender silentSender, DBContext db, RedisTemplate<String, String> redisTemplate) {
         this.silentSender = silentSender;
-        this.adminChats = db.getSet("adminChats");
+        this.redisTemplate = redisTemplate;
+        if (redisTemplate != null) {
+            this.adminChats = redisTemplate.opsForSet().members("todolist.adminChats").stream()
+                    .map(Long::parseLong)
+                    .collect(Collectors.toSet());
+        } else {
+            this.adminChats = db.getSet("adminChats");
+        }
     }
 
     public void replyToStart(Long chatId) {
@@ -45,7 +55,7 @@ public class MessageHandler {
     public void replyToAdmin(Long aLong) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(aLong);
-        if (adminChats.add(aLong)) sendMessage.setText("Chat added to the list of admin chats");
+        if (addAdminChat(aLong)) sendMessage.setText("Chat added to the list of admin chats");
         else sendMessage.setText("Chat is already in the list of admin chats");
 
         silentSender.execute(sendMessage);
@@ -58,5 +68,14 @@ public class MessageHandler {
             sendMessage.setText(message);
             silentSender.execute(sendMessage);
         }
+    }
+
+    private boolean addAdminChat(long chatId) {
+        if (adminChats.contains(chatId)) return false;
+        if (redisTemplate != null) {
+            redisTemplate.opsForSet().add("todolist.adminChats", String.valueOf(chatId));
+        }
+        adminChats.add(chatId);
+        return true;
     }
 }

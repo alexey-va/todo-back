@@ -1,7 +1,9 @@
 package ru.alexeyva.todoback.telegram;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.db.DBContext;
@@ -17,10 +19,12 @@ import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 public class AnnounceBot extends AbilityBot {
 
     final MessageHandler messageHandler;
+    final RedisTemplate<String, String> redisTemplate;
 
-    protected AnnounceBot(Environment env) {
+    protected AnnounceBot(Environment env, @Autowired(required = false) RedisTemplate<String, String> redisTemplate) {
         super(env.getProperty("TELEGRAM_BOT_TOKEN"), "todo-announce-bot");
-        this.messageHandler = new MessageHandler(this.silent, this.db());
+        this.redisTemplate = redisTemplate;
+        this.messageHandler = new MessageHandler(this.silent, this.db(), this.redisTemplate);
     }
 
     @Override
