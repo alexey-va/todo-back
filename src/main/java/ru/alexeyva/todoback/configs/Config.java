@@ -2,8 +2,6 @@ package ru.alexeyva.todoback.configs;
 
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.redis.RedisConnectionDetails;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -12,7 +10,6 @@ import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
@@ -56,6 +53,7 @@ public class Config {
             if(redisPassword != null) redisStandaloneConfiguration.setPassword(RedisPassword.of(redisPassword));
 
             LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisStandaloneConfiguration);
+            lettuceConnectionFactory.start();
 
             RedisTemplate<String, String> rt = new RedisTemplate<>();
             rt.setConnectionFactory(lettuceConnectionFactory);

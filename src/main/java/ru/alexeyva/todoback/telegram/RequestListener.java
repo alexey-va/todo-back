@@ -9,7 +9,7 @@ import ru.alexeyva.todoback.services.GeoIPService;
 
 @Component
 @RequiredArgsConstructor
-@Profile({"telegram", "redis"})
+@Profile({"telegram"})
 public class RequestListener {
 
     final AnnounceBot announceBot;

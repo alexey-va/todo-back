@@ -15,7 +15,7 @@ import static org.telegram.abilitybots.api.objects.Locality.USER;
 import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 @Component
-@Profile({"telegram", "redis"})
+@Profile({"telegram"})
 public class AnnounceBot extends AbilityBot {
 
     final MessageHandler messageHandler;
