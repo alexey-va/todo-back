@@ -1,6 +1,7 @@
 package ru.alexeyva.todoback.dtos;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thedeanda.lorem.LoremIpsum;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +28,11 @@ class TodoResponseTest {
         assertTrue(json.contains("status"));
         assertTrue(json.contains("success"));
         System.out.println(json);
+    }
+
+    @Test
+    public void testLorem(){
+        System.out.println(LoremIpsum.getInstance().getParagraphs(1,3));
     }
 
 }
