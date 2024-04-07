@@ -7,9 +7,11 @@ import org.springframework.context.ApplicationEvent;
 
 @Getter @Setter
 public class RequestEvent extends ApplicationEvent {
-    String request;
-    public RequestEvent(String request) {
-        super(request);
-        this.request = request;
+    String ip;
+    String requestedObject;
+    public RequestEvent(String ip, String requestedObject) {
+        super(ip);
+        this.ip = ip;
+        this.requestedObject = requestedObject;
     }
 }

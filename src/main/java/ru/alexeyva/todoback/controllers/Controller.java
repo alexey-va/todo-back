@@ -57,7 +57,6 @@ public class Controller {
     }
 
 
-
     @GetMapping("allusers")
     public ResponseEntity<TodoResponse> getAllUsers() {
         return TodoResponse.builder()
@@ -73,8 +72,8 @@ public class Controller {
         String username = principal.getName();
         String realIp = request.getHeader("X-Forwarded-For");
 
-        log.info("User {} requested all data: {}", realIp , username);
-        applicationEventPublisher.publishEvent(new RequestEvent(realIp+" requested all data of user "+username));
+        log.info("User {} requested all data: {}", realIp, username);
+        applicationEventPublisher.publishEvent(new RequestEvent(realIp, username));
 
         var user = todoUserRepo.fetchTodoUserEagerlyAll(username);
         if (user == null) throw new UserNotFoundException(username);
