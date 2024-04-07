@@ -3,6 +3,7 @@ package ru.alexeyva.todoback.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import ru.alexeyva.todoback.exception.UserAlreadyExistsException;
 import ru.alexeyva.todoback.exception.notfound.UserNotFoundException;
 import ru.alexeyva.todoback.model.*;
 import ru.alexeyva.todoback.repos.*;
+import ru.alexeyva.todoback.services.KafkaService;
 import ru.alexeyva.todoback.services.TodoUserService;
 
 import java.security.Principal;
@@ -33,6 +35,8 @@ public class Controller {
     final TodoUserService todoUserService;
     final RoleRepo roleRepo;
     final PasswordEncoder passwordEncoder;
+    @Autowired(required = false)
+    final KafkaService kafkaService;
 
     @PostMapping("login")
     public ResponseEntity<Object> login(Principal principal) {
@@ -68,6 +72,7 @@ public class Controller {
         String username = principal.getName();
         String realIp = request.getHeader("X-Forwarded-For");
         log.info("User {} requested all data: {}", realIp , username);
+        if(kafkaService != null) kafkaService.publishRequest(realIp, username);
         var user = todoUserRepo.fetchTodoUserEagerlyAll(username);
         if (user == null) throw new UserNotFoundException(username);
         return ResponseEntity.ok(user);

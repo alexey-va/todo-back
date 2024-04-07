@@ -4,6 +4,7 @@ import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.internals.Topic;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +36,37 @@ public class KafkaConfig {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory(env));
         return factory;
+    }
+
+    @Bean
+    public ProducerFactory<String, String> producerFactory(Environment env){
+        Map<String, Object> configs = new HashMap<>();
+        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("KAFKA_BOOTSTRAP"));
+        configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        return new DefaultKafkaProducerFactory<>(configs);
+    }
+
+    @Bean
+    public KafkaTemplate<String, String> kafkaTemplate(Environment env){
+        return new KafkaTemplate<>(producerFactory(env));
+    }
+
+    @Bean
+    KafkaAdmin kafkaAdmin(Environment env){
+        Map<String, Object> configs = new HashMap<>();
+        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("KAFKA_BOOTSTRAP"));
+        return new KafkaAdmin(configs);
+    }
+
+    @Bean
+    NewTopic logsTopic(){
+        return new NewTopic("todo_logs", 1, (short) 1);
+    }
+
+    @Bean
+    NewTopic requestsTopic(){
+        return new NewTopic("todo_requests", 1, (short) 1);
     }
 
 }
