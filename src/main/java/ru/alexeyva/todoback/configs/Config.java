@@ -59,8 +59,6 @@ public class Config {
 
             RedisTemplate<String, String> rt = new RedisTemplate<>();
             rt.setConnectionFactory(lettuceConnectionFactory);
-            rt.afterPropertiesSet();
-
             return rt;
         } catch (Exception e) {
             log.error("Redis not configured");

@@ -1,5 +1,7 @@
 package ru.alexeyva.todoback.telegram;
 
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.sender.SilentSender;
@@ -15,7 +17,7 @@ public class MessageHandler {
     private final RedisTemplate<String, String> redisTemplate;
 
 
-    public MessageHandler(SilentSender silentSender, DBContext db, RedisTemplate<String, String> redisTemplate) {
+    public MessageHandler(SilentSender silentSender, DBContext db, @Autowired(required = false) RedisTemplate<String, String> redisTemplate) {
         this.silentSender = silentSender;
         this.redisTemplate = redisTemplate;
         if (redisTemplate != null) {
@@ -26,6 +28,7 @@ public class MessageHandler {
             this.adminChats = db.getSet("adminChats");
         }
     }
+
 
     public void replyToStart(Long chatId) {
         SendMessage sendMessage = new SendMessage();
