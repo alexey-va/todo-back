@@ -1,6 +1,7 @@
 package ru.alexeyva.todoback.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.thedeanda.lorem.LoremIpsum;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -115,9 +116,13 @@ public class TodoUserService {
         todoUser.createTask(task3);
 
 
-        Sticker s1 = Sticker.builder().title("Sticker 1").text("Sticker 1 text").color("#FFC1C1").build();
-        Sticker s2 = Sticker.builder().title("Sticker 2").text("Sticker 2 text").color("#C1D1FF").build();
-        Sticker s3 = Sticker.builder().title("Sticker 3").text("Sticker 3 text").color("#C1FFC1").build();
+        String text1 = LoremIpsum.getInstance().getWords(10, 30);
+        String text2 = LoremIpsum.getInstance().getWords(10, 30);
+        String text3 = LoremIpsum.getInstance().getWords(10, 30);
+
+        Sticker s1 = Sticker.builder().title("Sticker 1").text(text1).color("#FFC1C1").build();
+        Sticker s2 = Sticker.builder().title("Sticker 2").text(text2).color("#C1D1FF").build();
+        Sticker s3 = Sticker.builder().title("Sticker 3").text(text3).color("#C1FFC1").build();
 
         s1.setTags(new HashSet<>(List.of(t2, t3)));
         s2.setTags(new HashSet<>(List.of(t1, t3)));
