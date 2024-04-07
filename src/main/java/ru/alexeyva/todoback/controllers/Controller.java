@@ -4,10 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.alexeyva.todoback.dtos.TodoResponse;
+import ru.alexeyva.todoback.events.RequestEvent;
 import ru.alexeyva.todoback.exception.NameAlreadyTakenException;
 import ru.alexeyva.todoback.exception.UnauthorizedAccessException;
 import ru.alexeyva.todoback.exception.UserAlreadyExistsException;
@@ -35,8 +37,7 @@ public class Controller {
     final TodoUserService todoUserService;
     final RoleRepo roleRepo;
     final PasswordEncoder passwordEncoder;
-    @Autowired(required = false)
-    KafkaService kafkaService;
+    final ApplicationEventPublisher applicationEventPublisher;
 
     @PostMapping("login")
     public ResponseEntity<Object> login(Principal principal) {
@@ -71,8 +72,10 @@ public class Controller {
     public ResponseEntity<TodoUser> getAllDataOfUser(Principal principal, HttpServletRequest request) {
         String username = principal.getName();
         String realIp = request.getHeader("X-Forwarded-For");
+
         log.info("User {} requested all data: {}", realIp , username);
-        if(kafkaService != null) kafkaService.publishRequest(realIp, username);
+        applicationEventPublisher.publishEvent(new RequestEvent(realIp+" requested all data of user "+username));
+
         var user = todoUserRepo.fetchTodoUserEagerlyAll(username);
         if (user == null) throw new UserNotFoundException(username);
         return ResponseEntity.ok(user);

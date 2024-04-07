@@ -38,13 +38,12 @@ public class KafkaService {
                 .toList();
     }
 
-
-    public void publishRequest(String remoteAddr, String userRequested){
+/*    public void publishRequest(String remoteAddr, String userRequested){
         //System.out.println("Publishing request");
         //System.out.println(requests);
         if(requests.contains(remoteAddr + ";;;" + userRequested)) return;
         kafkaTemplate.send("todo_requests", remoteAddr + ";;;" + userRequested);
-    }
+    }*/
 
 }
 

@@ -38,6 +38,7 @@ public class KafkaConfig {
         return factory;
     }
 
+/*
     @Bean
     public ProducerFactory<String, String> producerFactory(Environment env) {
         Map<String, Object> configs = new HashMap<>();
@@ -72,5 +73,6 @@ public class KafkaConfig {
     NewTopic requestsTopic() {
         return new NewTopic("todo_requests", 1, (short) 1);
     }
+*/
 
 }
