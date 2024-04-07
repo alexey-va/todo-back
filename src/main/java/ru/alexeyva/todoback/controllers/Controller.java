@@ -36,7 +36,7 @@ public class Controller {
     final RoleRepo roleRepo;
     final PasswordEncoder passwordEncoder;
     @Autowired(required = false)
-    final KafkaService kafkaService;
+    KafkaService kafkaService;
 
     @PostMapping("login")
     public ResponseEntity<Object> login(Principal principal) {
