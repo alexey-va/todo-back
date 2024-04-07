@@ -1,5 +1,6 @@
 package ru.alexeyva.todoback.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -63,9 +64,9 @@ public class Controller {
 
 
     @GetMapping("user")
-    public ResponseEntity<TodoUser> getAllDataOfUser(Principal principal) {
+    public ResponseEntity<TodoUser> getAllDataOfUser(Principal principal, HttpServletRequest request) {
         String username = principal.getName();
-        log.info("User requested all data: {}", username);
+        log.info("User {} requested all data: {}", request.getRemoteAddr() , username);
         var user = todoUserRepo.fetchTodoUserEagerlyAll(username);
         if (user == null) throw new UserNotFoundException(username);
         return ResponseEntity.ok(user);
