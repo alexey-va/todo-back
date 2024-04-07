@@ -23,7 +23,7 @@ public class KafkaConfig {
 
 
     @Bean
-    public ConsumerFactory<String, String> consumerFactory(Environment env){
+    public ConsumerFactory<String, String> consumerFactory(Environment env) {
         Map<String, Object> configs = new HashMap<>();
         configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("KAFKA_BOOTSTRAP"));
         configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
@@ -39,7 +39,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ProducerFactory<String, String> producerFactory(Environment env){
+    public ProducerFactory<String, String> producerFactory(Environment env) {
         Map<String, Object> configs = new HashMap<>();
         configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("KAFKA_BOOTSTRAP"));
         configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -48,24 +48,28 @@ public class KafkaConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate(Environment env){
+    public KafkaTemplate<String, String> kafkaTemplate(Environment env) {
         return new KafkaTemplate<>(producerFactory(env));
     }
 
     @Bean
-    KafkaAdmin kafkaAdmin(Environment env){
+    KafkaAdmin kafkaAdmin(Environment env) {
         Map<String, Object> configs = new HashMap<>();
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("KAFKA_BOOTSTRAP"));
         return new KafkaAdmin(configs);
     }
 
     @Bean
-    NewTopic logsTopic(){
-        return new NewTopic("todo_logs", 1, (short) 1);
+    NewTopic logsTopic() {
+        NewTopic logsTopic = new NewTopic("todo_logs", 1, (short) 1);
+        Map<String, String> configs = new HashMap<>();
+        configs.put("retention.ms", String.valueOf(1000 * 60 * 60 * 24));
+        logsTopic.configs(configs);
+        return logsTopic;
     }
 
     @Bean
-    NewTopic requestsTopic(){
+    NewTopic requestsTopic() {
         return new NewTopic("todo_requests", 1, (short) 1);
     }
 
