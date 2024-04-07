@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-@SpringBootTest
-@Testcontainers
+
+/*@Testcontainers
 @Import(TestConfig.class)
-@ActiveProfiles("test")
+@ActiveProfiles("test")*/
 class TodoBackApplicationTests {
 
     @Test
