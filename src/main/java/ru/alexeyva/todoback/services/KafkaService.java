@@ -6,13 +6,15 @@ import org.springframework.stereotype.Service;
 import ru.alexeyva.todoback.dtos.LogMessage;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 @Service
 @Profile("kafka")
 public class KafkaService {
 
-    private final List<LogMessage> logs = new ArrayList<>();
+    private final Deque<LogMessage> logs = new ConcurrentLinkedDeque<>();
 
     @KafkaListener(topics = "todo_logs", groupId = "${spring.kafka.consumer.group-id}")
     public void consume(String message) {

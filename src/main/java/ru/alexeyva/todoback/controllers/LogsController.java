@@ -17,7 +17,8 @@ public class LogsController {
     private KafkaService kafkaService;
 
     @GetMapping
-    public ResponseEntity<List<LogMessage>> getLogs(@RequestParam(required = false) Long fromPar, @RequestParam(required = false) Long toPar) {
+    public ResponseEntity<List<LogMessage>> getLogs(@RequestParam(required = false, name = "from") Long fromPar,
+                                                    @RequestParam(required = false, name = "to") Long toPar) {
         long from = fromPar == null ?
         System.currentTimeMillis() - 1000 * 60 * 5
         : fromPar;
