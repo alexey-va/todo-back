@@ -17,14 +17,17 @@ public class LogsController {
     private KafkaService kafkaService;
 
     @GetMapping
-    public ResponseEntity<List<LogMessage>> getLogs(@RequestParam(required = false, name = "from") Long fromPar,
-                                                    @RequestParam(required = false, name = "to") Long toPar) {
+    public ResponseEntity<List<String>> getLogs(@RequestParam(required = false, name = "from") Long fromPar,
+                                                    @RequestParam(required = false, name = "to") Long toPar,
+                                                @RequestParam(required = false, name = "limit") Integer limitPar) {
         long from = fromPar == null ?
         System.currentTimeMillis() - 1000 * 60 * 5
         : fromPar;
         long to = toPar == null ? System.currentTimeMillis() : toPar;
+        int limit = limitPar == null ? 300 : limitPar;
+        if (limit > 500) limit = 500;
 
         if (kafkaService == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(kafkaService.getLogs(from, to));
+        return ResponseEntity.ok(kafkaService.getLogs(from, to).stream().limit(limit).map(LogMessage::getMessage).toList());
     }
 }

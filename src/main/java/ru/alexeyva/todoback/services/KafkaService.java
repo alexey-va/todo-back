@@ -16,8 +16,6 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class KafkaService {
 
     private Deque<LogMessage> logs = new ConcurrentLinkedDeque<>();
-    private Set<String> requests = new HashSet<>();
-    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @KafkaListener(topics = "todo_logs", groupId = "${spring.kafka.consumer.group-id}")
     public void consume(String message) {
@@ -27,23 +25,11 @@ public class KafkaService {
         logs.add(logMessage);
     }
 
-    @KafkaListener(topics = "todo_requests", groupId = "${spring.kafka.consumer.group-id}")
-    public void consumeRequest(String message) {
-        requests.add(message);
-    }
 
     public List<LogMessage> getLogs(long from, long to) {
         return logs.stream()
                 .filter(log -> log.getTimestamp() >= from && log.getTimestamp() <= to)
                 .toList();
     }
-
-/*    public void publishRequest(String remoteAddr, String userRequested){
-        //System.out.println("Publishing request");
-        //System.out.println(requests);
-        if(requests.contains(remoteAddr + ";;;" + userRequested)) return;
-        kafkaTemplate.send("todo_requests", remoteAddr + ";;;" + userRequested);
-    }*/
-
 }
 
