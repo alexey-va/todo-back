@@ -22,6 +22,7 @@ public class TaskList {
     @JsonIgnore
     Long id;
 
+    @Column(columnDefinition = "TEXT")
     String title;
     String color;
 

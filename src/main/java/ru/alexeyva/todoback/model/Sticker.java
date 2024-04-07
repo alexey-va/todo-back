@@ -24,7 +24,9 @@ public class Sticker {
     @JsonIgnore
     Long id;
 
+    @Column(columnDefinition = "TEXT")
     String title;
+    @Column(columnDefinition = "TEXT")
     String text;
     String color;
     @ManyToMany
